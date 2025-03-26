@@ -1,0 +1,32 @@
+﻿@model MyProject.Models.ForumComments
+
+@{
+    Layout = null;
+}
+
+@{
+    var user = Context.Items["User"] as Member;
+}
+
+@{
+    var admin = Context.Items["Manager"] as Administrator;
+}
+
+<form asp-action="Create" id="forumCommentsForm">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="CommentID" />
+ 
+    <input type="hidden" asp-for="PostID" value="@ViewBag.PostID" />
+           
+    <input type="hidden" asp-for="ForumID" value="@ViewBag.ForumID" />
+
+    <input type="hidden" asp-for="MemberID" value="@user.MemberID" />
+
+    <div class="form-group">
+        <input asp-for="PostContents" class="form-control" placeholder="請輸入留言..." />
+        <span asp-validation-for="PostContents" class="text-danger"></span>
+    </div>
+</form>
+
+

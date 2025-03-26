@@ -1,0 +1,146 @@
+﻿@model MyProject.ViewModels.VMMember
+
+@{
+    ViewData["Title"] = "修改會員資料";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" id="editForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="MemberID" value="@Model.MemberID" />
+
+            <div class="form-group mb-3">
+                <label asp-for="AccountName" class="control-label"></label>
+                <input asp-for="AccountName" class="form-control" />
+                <span asp-validation-for="AccountName" class="text-danger"></span>
+                <span class="text-danger" id="AccountNameCheck"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PersonalName" class="control-label"></label>
+                <input asp-for="PersonalName" class="form-control" />
+                <span asp-validation-for="PersonalName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PersonalID" class="control-label"></label>
+                <input asp-for="PersonalID" class="form-control" />
+                <span asp-validation-for="PersonalID" class="text-danger"></span>
+                <span class="text-danger" id="PersonalIDCheck"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Gender" class="control-label"></label>
+
+                <input type="radio" class="btn-check" id="male" value="true" asp-for="Gender" autocomplete="off">
+                <label class="btn btn-outline-primary btn-sm mx-3" for="male">男</label>
+
+                <input type="radio" class="btn-check" id="female" value="false" asp-for="Gender" autocomplete="off">
+                <label class="btn btn-outline-danger btn-sm" for="female">女</label>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Birthday" class="control-label"></label>
+                <input asp-for="Birthday" type="Date" class="form-control" />
+                <span asp-validation-for="Birthday" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Mobile" class="control-label"></label>
+                <input asp-for="Mobile" class="form-control" />
+                <span asp-validation-for="Mobile" class="text-danger"></span>
+                <span class="text-danger" id="MobileCheck"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <span class="text-danger" id="EmailCheck"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AccountPassword" class="control-label"></label>
+                <input asp-for="AccountPassword" class="form-control" />
+                <span asp-validation-for="AccountPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PasswordConfirm" class="control-label"></label>
+                <input asp-for="PasswordConfirm" class="form-control" />
+                <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+            </div>
+           
+            <div class="row row-cols-auto">
+                <div class="form-group">
+                    <input type="submit" value="確定更改" class="btn btn-outline-dark" />
+                </div>
+                <div>
+                    <a asp-action="Details" asp-route-id="@Model?.MemberID" class="btn btn-outline-dark">取消編輯</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        $(document).ready(function () {
+                // 通用檢查函數
+            function checkField(fieldId, checkUrl, checkText, errorText, resultText) {
+                // 確保當前欄位沒有錯誤訊息
+                if ($(fieldId).next('.text-danger').text() != '') {
+                    $(checkText).text('');
+                    return;
+                }
+
+                // 發送 AJAX 請求
+                $.ajax({
+                    url: checkUrl + $(fieldId).val(), // 動態構建請求 URL
+                    type: 'get',
+                    success: function (data) {
+                        // 根據後端回應，顯示結果
+                        if (data) {
+                            $(checkText).text(resultText);
+                        } else {
+                            $(checkText).text(errorText);
+                        }
+                    }
+                });
+            }
+
+            // 監聽每個欄位的變動
+            $('#AccountName').on('change', function () {
+                checkField('#AccountName', '/Members/MemberInfoExists?AccountName=', '#AccountNameCheck', '會員暱稱重複', '帳號可用');
+            });
+
+            $('#PersonalID').on('change', function () {
+                checkField('#PersonalID', '/Members/MemberInfoExists?PersonalID=', '#PersonalIDCheck', '身分證字號重複', '身分證字號可用');
+            });
+
+            $('#Mobile').on('change', function () {
+                checkField('#Mobile', '/Members/MemberInfoExists?Mobile=', '#MobileCheck', '手機號碼重複', '手機號碼可用');
+            });
+
+            $('#Email').on('change', function () {
+                checkField('#Email', '/Members/MemberInfoExists?Email=', '#EmailCheck', 'Email重複', 'Email可用');
+            });
+
+            // 禁止表單提交，如果檢查有錯誤
+            $('#editForm').on('submit', function (e) {
+                if ($('#AccountCheck').text() == '會員暱稱重複' || $('#PersonalIDCheck').text() == '身分證字號重複' || $('#MobileCheck').text() == '手機號碼重複' || $('#EmailCheck').text() == 'Email重複') {
+                    e.preventDefault(); // 阻止表單提交
+                }
+            });
+        });
+    </script>
+}

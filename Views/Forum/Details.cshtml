@@ -1,0 +1,155 @@
+﻿@model MyProject.ViewModels.VMForum
+
+@{
+    ViewData["Title"] = Model.PostTitle;
+}
+
+@{
+    var user = Context.Items["User"] as Member;
+}
+
+@{
+    var admin = Context.Items["Manager"] as Administrator;
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div>
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <p class="card-text">@Html.Raw(Model.PostContents.Replace("\r\n", "<br>"))</p>
+
+        </div>
+
+        @if (Model.Image != null)  
+        {  
+            foreach (var item in Model.Image)  
+            {  
+                <img src="~/ForumImages/@item" class="card-img-top img-thumbnail" />  
+            }  
+        }  
+
+        <div class="card-footer">
+            <p class="text-end">@Html.DisplayFor(modelItem => @Model.AccountName) 於 @Html.DisplayFor(modelItem => @Model.PostTime)發表</p>
+        </div>
+
+    </div>
+</div>
+
+<hr />
+
+<!--顯示該筆主留言所有的回覆留言-->
+<div id="forumCommentsList">
+    @await Component.InvokeAsync("VCForumComments", new { postid = Model.PostID })
+</div>
+
+@if (user != null)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-10" id="createForumComment">
+
+            </div>
+
+            <div class="form-group col-2">
+                <input asp-action="Create" type="submit" value="發送留言" class="btn btn-outline-dark" id="createForumCommentButton" />
+            </div>
+        </div>
+    </div>
+}
+
+<div class="text-end mt-3" >
+    @if (user != null && user.MemberID == Model.MemberID)
+    {
+        <a asp-action="Edit" asp-route-postid="@Model?.PostID" asp-route-forumid="@ViewBag.ForumID" class="btn btn-outline-dark">編輯貼文</a>
+        <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-outline-danger">刪除貼文</button>
+    }
+    <a asp-action="Index" asp-route-forumid="@ViewBag.ForumID" class="btn btn-outline-dark">上一頁</a>
+</div>
+
+<!--刪除貼文Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteModalLabel">刪除貼文</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                您是否想刪除此篇貼文
+            </div>
+
+            <div class="modal-footer">
+                <form asp-action="DeleteForum" asp-controller="Forum" asp-route-postid="@Model.PostID" asp-route-forumid="@ViewBag.ForumID">
+                    <button type="submit" class="btn btn-outline-danger fw-bold fw-3">確認刪除</button>
+                </form>
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">取消</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        //載入回覆留言表單
+        $('#createForumComment').load("/ForumComments/Create?postid=@(Model.PostID)&forumid=@(Model.ForumID)");
+
+        //取得留言編號
+        $('#createForumCommentButton').on("click", function () {
+            let maxRetries = 3; // 設定最多重試 3 次
+            let retryCount = 0;
+
+            function fetchPostID() {
+                $.ajax({
+                    url: '/ForumComments/GetCommentID',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#CommentID').val(data);
+
+                        if (/^\d+$/.test($('#CommentID').val())) {
+                            addComment();
+                        }
+                    },
+                    error: function () {
+                        retryCount++;
+                        if (retryCount < maxRetries) {
+                            console.warn(`獲取 CommentID 失敗，嘗試重試第 ${retryCount} 次`);
+                            fetchPostID(); // 再次呼叫函式
+                        } else {
+                            console.error("無法獲取 CommentID，請稍後再試");
+                        }
+                    }
+                });
+            }
+            fetchPostID(); // 第一次呼叫
+
+        });
+
+        //送出留言內容到資料庫
+        function addComment(){
+            $.ajax({
+                type:'Post',
+                url:'/ForumComments/Create',
+                data:$('#forumCommentsForm').serialize(),  //送出序列化資料
+                success:function(){
+                    $('#forumCommentsForm')[0].reset();
+                    $('#forumCommentsList').load("/ForumComments/GetCommentsByViewComponent?postid=@(Model.PostID)");
+                },
+                error:function (res) {
+                    console.log(res);
+                }
+            });
+        }
+
+    </script>
+}

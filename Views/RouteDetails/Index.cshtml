@@ -1,0 +1,164 @@
+﻿@model IEnumerable<MyProject.Models.RouteDetail>
+
+@{
+    ViewData["Title"] = "路線資訊查詢";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr/>
+
+<div class="container">
+	<div class="row">
+		<form asp-action="GetRoute">
+			<div class="col-12 mb-3">
+
+				<span class="text-primary">步道起點：</span>
+
+				<select class="me-1" id="RouteIDStart" name="routeIDStart">
+					@foreach (var route in (SelectList)ViewData["RouteID"])
+					{
+						<option value="@route.Value">@route.Text</option>
+					}
+				</select>
+
+				<select class="me-1" id="LandmarkTypeStart">
+					@foreach (var type in (SelectList)ViewData["LandmarkType"])
+					{
+						<option value="@type.Value">@type.Text</option>
+					}
+				</select>
+
+				<select id="LandmarkIDStart" name="landmarkIDStart">
+					<option value="">請選擇地標</option>
+				</select>
+
+			</div>
+
+			<div class="col-12">
+
+				<span class="text-primary">步道終點：</span>
+
+				<select class="me-1" id="RouteIDEnd" name="routeIDGoal">
+					@foreach (var route in (SelectList)ViewData["RouteID"])
+					{
+						<option value="@route.Value">@route.Text</option>
+					}
+				</select>
+
+				<select class="me-1" id="LandmarkTypeEnd">
+					@foreach (var type in (SelectList)ViewData["LandmarkType"])
+					{
+						<option value="@type.Value">@type.Text</option>
+					}
+				</select>
+
+				<select id="LandmarkIDEnd" name="landmarkIDGoal">
+					<option value="">請選擇地標</option>
+				</select>
+
+			</div>
+
+			<input type="submit" value="查詢" class="btn btn-outline-dark mt-3"/>
+		</form>
+		<h3 class="text-center text-danger">@ViewData["ErrorMessage"]</h3>
+	</div>
+</div>
+
+<h2 class="text-center mt-4">路線查詢結果</h2>
+
+<table id="routeTable" class="table table-bordered">
+	<thead>
+		<tr>
+			<th>路線名稱</th>
+			<th>標的物名稱</th>
+			<th>海拔高度(m)</th>
+			<th>二點間距(K)</th>
+			<th>海拔高度差</th>
+			<th>上山時間</th>
+			<th>下山時間</th>
+			<th>經緯度</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- 資料將由 JavaScript 動態填充 -->
+	</tbody>
+</table>
+
+
+
+@section Scripts{
+
+	<script>
+
+		$(document).ready(function () {
+			function loadLandmarks(routeSelector, typeSelector, landmarkSelector) {
+				$(routeSelector + ", " + typeSelector).on("change", function () {
+					var routeID = $(routeSelector).val();
+					var typeID = $(typeSelector).val();
+
+					if (!routeID || !typeID) {
+						$(landmarkSelector).html('<option value="">請選擇地標</option>');
+						return;
+					}
+
+					$.ajax({
+						url: "/RouteDetails/GetLandmarks",
+						type: "GET",
+						data: { routeID: routeID, typeID: typeID },
+						success: function (data) {
+							var options = '<option value="">請選擇地標</option>';
+							$.each(data, function (index, item) {
+								options += `<option value="${item.Value}">${item.text}</option>`;
+							});
+							$(landmarkSelector).html(options);
+						}
+					});
+				});
+			}
+			loadLandmarks("#RouteIDStart", "#LandmarkTypeStart", "#LandmarkIDStart");
+			loadLandmarks("#RouteIDEnd", "#LandmarkTypeEnd", "#LandmarkIDEnd");
+		});
+
+		
+		$(document).ready(function () {
+			let requestData = {
+				routeIDStart: "起點步道名稱",
+				landmarkIDStart: "起點",
+				routeIDGoal: "終點步道名稱",
+				landmarkIDGoal: "終點"
+			};
+
+			$.ajax({
+				url: "/RouteDetails/GetRoute",
+				type: "POST",
+				data: requestData,
+				contentType: "application/x-www-form-urlencoded",
+				success: function (response) {
+					let routeData = JSON.parse(response); // 解析 JSON 字串
+					let tableBody = $("#routeTable tbody");
+
+					tableBody.empty(); // 清空表格
+					routeData.forEach(route => {
+						let row = `
+							<tr>
+								<td>${route.RouteName}</td>
+								<td>${route.LandmarkName}</td>
+								<td>${route.Altitude}</td>
+								<td>${route.Distance}</td>
+								<td>${route.ElevationGain}</td>
+								<td>${route.HikingTimeUp}</td>
+								<td>${route.HikingTimeDown}</td>
+								<td>${route.Latitude}, ${route.Longitude}</td>
+							</tr>`;
+						tableBody.append(row);
+					});
+				},
+				error: function (xhr, status, error) {
+					console.error("查詢失敗：" + error);
+				}
+			});
+		});
+	</script>
+
+	
+}

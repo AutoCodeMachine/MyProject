@@ -1,0 +1,82 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+
+<div class="dropdown p-2 mb-2" id="landmarkSelect">
+	<button class="btn btn-outline-dark dropdown-toggle" type="button" id="landmarksdropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
+		請選擇三角點
+	</button>
+	<ul class="dropdown-menu" aria-labelledby="landmarksdropdownMenu">
+		@foreach (var item in (SelectList)ViewData["landmarks"])
+		{
+			<li><button class="dropdown-item text-dark" type="button" value="@item.Value">@item.Value.@item.Text</button></li>
+		}
+	</ul>
+</div>
+
+<div class="container">
+	<div class="row d-flex">
+
+		<div class="col-xl-3">
+			<iframe id="windyMap" height="450"
+					src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=default&zoom=6&overlay=wind&product=ecmwf&level=surface&lat=22.593422121560295&lon=120.30859691017629&message=true"
+					frameborder="0">
+			</iframe>
+			
+		</div>
+
+		<div class="col-xl-9">
+			<iframe id="CCTVs" src="https://www.twipcam.com/" width="100%" height="100%"></iframe>
+		</div>
+
+
+	</div>
+
+	<div class="row">
+		<div class="col-xl-12">
+			<iframe id="windyForecast" height="190" width="100%"
+					src="https://embed.windy.com/embed.html?type=forecast&location=coordinates&detail=true&detailLat=22.593422121560295&detailLon=120.30859691017629&metricTemp=°C&metricRain=mm&metricWind=default"
+					frameborder="0">
+			</iframe>
+		</div>
+</div>
+
+@section Scripts {
+	<script>
+		$(document).ready(function () {
+			$("#landmarkSelect .dropdown-item").click(function () {
+				var selectedLandmarkID = $(this).val(); // 取得被點擊項目的 value
+				var selectedText = $(this).text(); // 取得按鈕上的文字
+
+				// 更新下拉按鈕顯示的文字
+				$("#landmarksdropdownMenu").text(selectedText);
+
+				if (selectedLandmarkID) {
+					$.ajax({
+						url: '@Url.Action("GetLandmarkCoordinates", "Home")',
+						type: 'GET',
+						data: { landmarkID: selectedLandmarkID },
+						success: function (data) {
+							if (data) {
+
+								var mapSrc = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=default&zoom=9&overlay=wind&product=ecmwf&level=surface&lat=${data.lat}&lon=${data.lng}&message=true`;
+								var forecastSrc = `https://embed.windy.com/embed.html?type=forecast&location=coordinates&detail=true&detailLat=${data.lat}&detailLon=${data.lng}&metricTemp=°C&metricRain=mm&metricWind=default`;
+								var cctvSrc = `https://www.twipcam.com/api/v1/query-cam-list-by-coordinate?lat=${data.lat}&lon=${data.lng}`;
+
+								$("#windyMap").attr("src", mapSrc);
+								$("#windyForecast").attr("src", forecastSrc);
+								$("#CCTVs").attr("src", cctvSrc);
+							} else {
+								
+							}
+						},
+						error: function () {
+							console.log("獲取地標經緯度時發生錯誤！");
+						}
+					});
+				}
+			});
+		});
+	</script>
+}

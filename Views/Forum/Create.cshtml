@@ -1,0 +1,158 @@
+﻿@model MyProject.ViewModels.VMForum
+
+@{
+    var user = Context.Items["User"] as Member;
+}
+
+@{
+    ViewData["Title"] = "新增貼文";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr />
+<div class="row">
+    <div class="col-lg-5">
+        <form asp-action="Create" enctype="multipart/form-data" id="newPost">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="PostID" />
+
+            <input type="hidden" asp-for="ForumID" value="@ViewBag.ForumID" />
+
+            <div class="form-group mb-3">
+                <label asp-for="PostTitle" class="control-label"></label>
+                <input asp-for="PostTitle" class="form-control" />
+                <span asp-validation-for="PostTitle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PostContents" class="control-label"></label>
+                <textarea asp-for="PostContents" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="PostContents" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Image" class="control-label">上傳圖片</label>
+                <div id="imageUploadContainer">
+                    <div class="image-upload">
+                        <input type="file" name="newPhoto[]" id="newImage" class="form-control" />
+                    </div>
+                </div>
+                <button type="button" id="addImageBtn" class="btn btn-outline-dark btn-sm mt-2">新增圖片</button>
+                <span class="text-danger">@ViewData["Message"]</span>
+            </div>
+
+            <div class="form-group mb-3">
+                <p>發文者：@user.AccountName</p>
+                <input type="hidden" asp-for="MemberID" class="form-control" value="@user.MemberID" readonly />
+            </div>
+
+            <input type="hidden" asp-for="PostTime" value="@DateTime.Now" />
+
+
+            <div class="row row-cols-auto">
+                <div class="form-group">
+                    <input asp-action="Create" type="submit" value="發布貼文" class="btn btn-outline-dark" />
+                </div>
+                <div>
+                    <a asp-action="Index" asp-route-forumid="@ViewBag.ForumID" class="btn btn-outline-dark">放棄貼文</a>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="col-lg-7">
+
+        <img id="imagePreview" class="img-fluid" />
+
+    </div>
+
+</div>
+
+@* 用來顯示前端的錯誤訊息 *@
+   @*  <div asp-validation-summary="All" class="text-danger"></div> *@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        //上傳圖片預覽
+        $('#newImage').change(function(){
+
+            let file = this.files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = function(event){
+
+                $('#imagePreview').attr('src', event.target.result);
+
+            };
+
+            reader.readAsDataURL(file);
+        });
+   
+        document.addEventListener("DOMContentLoaded", function () {
+            let maxUploads = 99; // 限制最多 99 張圖片
+            let uploadContainer = document.getElementById("imageUploadContainer");
+
+            $('#addImageBtn').on("click", function () {
+                let currentUploads = uploadContainer.getElementsByClassName("image-upload").length;
+                if (currentUploads < maxUploads) {
+                    let newUploadDiv = document.createElement("div");
+                    newUploadDiv.classList.add("image-upload", "mt-2");
+
+                    let newInput = document.createElement("input");
+                    newInput.type = "file";
+                    newInput.name = "newPhoto[]"; // 讓多張圖片能夠正確上傳
+                    newInput.classList.add("form-control");
+
+                    let removeButton = document.createElement("button");
+                    removeButton.type = "button";
+                    removeButton.textContent = "移除";
+                    removeButton.classList.add("btn", "btn-outline-danger", "btn-sm", "mt-2");
+                    removeButton.onclick = function () {
+                    newUploadDiv.remove();
+                    };
+
+                    newUploadDiv.appendChild(newInput);
+                    newUploadDiv.appendChild(removeButton);
+                    uploadContainer.appendChild(newUploadDiv);
+                } 
+                else
+                {
+                    alert("最多只能上傳 99 張圖片！");
+                }
+            });
+        });
+   
+        //獲取PostID
+        $(document).on('change', '#newPost', function () {
+            let maxRetries = 3; // 設定最多重試 3 次
+            let retryCount = 0;
+
+            function fetchPostID() {
+                $.ajax({
+                    url: '@Url.Content("~/Forum/GetPostID")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#PostID').val(data);
+                    },
+                    error: function () {
+                        retryCount++;
+                        if (retryCount < maxRetries) {
+                            console.warn(`獲取 PostID 失敗，嘗試重試第 ${retryCount} 次`);
+                            fetchPostID(); // 再次呼叫函式
+                        } else {
+                            console.error("無法獲取 PostID，請稍後再試");
+                        }
+                    }
+                });
+            }
+            fetchPostID(); // 第一次呼叫
+        });
+
+    </script>
+}

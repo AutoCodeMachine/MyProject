@@ -1,0 +1,39 @@
+﻿@model IEnumerable<MyProject.Models.ForumName>
+
+@{
+    ViewData["Title"] = "討論區版面";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-dark">新增版面</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ForumID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ForumName1)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ForumID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ForumName1)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ForumID" class="btn btn-outline-dark">編輯</a> |
+                <a asp-action="Delete" asp-route-id="@item.ForumID" class="btn btn-outline-dark">刪除</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<MyProject.ViewModels.VMForum>
+
+@{
+    ViewData["Title"] = @ViewBag.ForumName;
+}
+
+<h1 class="text-center">@ViewBag.ForumName</h1>
+
+<p class="text-end ">
+    <a asp-action="Create" asp-route-forumid="@ViewBag.ForumID" class="btn btn-outline-dark">新增貼文</a>
+</p>
+
+<div class="row">
+
+    <h3 class="text-center text-danger">@ViewData["ForumMessage"]</h3>
+        
+    @if(Model != null)
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-xl-4 col-sm-6">
+
+                <div class="card mb-4">
+
+                    <div class="card-body">
+
+                        <h3 class="card-title">@Html.DisplayFor(modelItem => item.PostTitle)</h3>
+
+                        <p class="card-text">@Html.Raw(item.PostContents.Replace("\r\n", "<br>"))</p>
+
+                    </div>
+
+                    @if (item.Image != null && item.Image.Any())
+				    {
+                        var imageID = item.PostID + "01";
+                        var imageName = item.Image.FirstOrDefault(image => image.Contains(imageID));
+                        if (imageName != null)
+                        {
+                            <img src="~/ForumImages/@imageName" class="card-img-top img-thumbnail" />
+                        }
+				    }
+
+				    <div class="card-footer">
+                        <p class="text-end">
+                            @item.AccountName 於 @Html.DisplayFor(modelItem => item.PostTime)發表|
+                            <a asp-action="Details" asp-route-postid="@item.PostID" asp-route-forumid="@ViewBag.ForumID">看更多... </a>
+                        </p>
+                    </div>
+               
+                </div>
+
+            </div>
+        }
+    }
+</div>

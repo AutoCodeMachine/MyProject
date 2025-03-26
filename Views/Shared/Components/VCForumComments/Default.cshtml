@@ -1,0 +1,56 @@
+﻿@model IEnumerable<MyProject.Models.ForumComments>
+
+@{
+    var user = Context.Items["User"] as Member;
+}
+
+@{
+    Layout = null;
+}
+
+@if (Model.Count() != 0)
+{
+    <h5 class="text-center">回覆內容</h5>
+
+    <div class="border border-1 rounded p-4 bg-light">
+
+        @foreach (var item in Model)
+        {
+            <p>@Html.Raw(@item.PostContents.Replace("\r\n", "<br>"))</p>
+            <p class="text-end">@Html.DisplayFor(modelItem => @item.Member.AccountName) 於 @Html.DisplayFor(modelItem => @item.PostTime)</p>
+            <div class="text-end">
+                @if (user != null && user.MemberID == item.MemberID)
+                {
+                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCommentModal">刪除留言</button>
+                }
+            </div>
+            <hr />
+
+            <!--刪除留言Modal-->
+            <div class="modal fade" id="deleteCommentModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title text-danger" id="deleteCommentModalLabel">刪除貼文</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            您是否想刪除此則留言
+                        </div>
+
+                        <div class="modal-footer">
+                            <form asp-action="DeleteComment" asp-controller="ForumComments" asp-route-commentid="@item.CommentID" asp-route-postid="@item.PostID" asp-route-forumid="@item.ForumID">
+                                <button type="submit" class="btn btn-outline-danger fw-bold fw-3">確認刪除</button>
+                            </form>
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">取消</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+

@@ -1,0 +1,143 @@
+﻿@using MyProject.ViewModels
+@using Newtonsoft.Json;
+@using MyProject.Models;
+
+@inject MyProjectContext _context;
+@{   
+    ViewData["ForumName"] = new SelectList(_context.ForumName, "ForumID", "ForumName1");
+}
+
+@{
+    var user = Context.Items["User"] as Member;
+}
+
+@{
+    var admin = Context.Items["Manager"] as Administrator;
+}
+
+@{
+    ViewData["System"] = "100 Peaks百岳登山紀錄";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["System"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MyProject.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">@ViewData["System"]</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-action="Index" asp-controller="RouteDetails">路線資訊</a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" id="ForumDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                討論區
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="ForumDropdownMenuLink">
+                                @foreach (var item in (SelectList) ViewData["ForumName"])
+                                {
+                                    <li>
+                                        <a asp-action="Index" asp-controller="Forum" asp-route-forumid="@item.Value" class="dropdown-item text-dark">@item.Text</a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" id="WebsiteDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">官方網站連結</a>
+                            <ul class="dropdown-menu text-dark" aria-labelledby="WebsiteDropdownMenuLink">
+                                <li><a href="https://hike.taiwan.gov.tw/web_index.aspx" target="_blank" rel="noopener noreferrer" class="dropdown-item text-dark">臺灣登山申請一站式服務網</a></li>
+                                <li><a href="https://hike.taiwan.gov.tw/open.aspx" target="_blank" rel="noopener noreferrer" class="dropdown-item text-dark">登山路線開放狀態查詢</a></li>
+                                <li><a href="https://www.ysnp.gov.tw/" target="_blank" rel="noopener noreferrer" class="dropdown-item text-dark">玉山國家公園</a></li>
+                                <li><a href="https://www.taroko.gov.tw/" target="_blank" rel="noopener noreferrer" class="dropdown-item text-dark">太魯閣國家公園</a></li>
+                                <li><a href="https://www.spnp.gov.tw/" target="_blank" rel="noopener noreferrer" class="dropdown-item text-dark">雪霸國家公園</a></li>
+                            </ul>
+                        </li>
+
+                        @if (Context.Session.GetString("Manager") != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" id="ForumManageDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">討論區管理</a>
+                                <ul class="dropdown-menu text-dark" aria-labelledby="ForumManageDropdownMenuLink">
+                                    <li><a asp-action="Index" asp-controller="ManagerForumName" class="dropdown-item text-dark">版面</a></li>
+                                    <li><a asp-action="Index" asp-controller="ManagerForum" class="dropdown-item text-dark">貼文</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" id="RouteManageDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">登山路線管理</a>
+                                <ul class="dropdown-menu text-dark" aria-labelledby="RouteManageDropdownMenuLink">
+                                    <li><a asp-action="" asp-controller="" class="dropdown-item text-dark">路線資訊</a></li>
+                                    <li><a asp-action="" asp-controller="" class="dropdown-item text-dark">地標資訊</a></li>
+                                    <li><a asp-action="" asp-controller="" class="dropdown-item text-dark">路線內容</a></li>
+                                </ul>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+                <div class="row row-cols-auto">
+                    @if (Context.Session.GetString("User") != null)
+                    {  
+                        <span class="mt-2">Welcome @user.AccountName</span>
+                        <a class="btn btn-outline-dark me-4" asp-controller="Members" asp-action="Details" asp-route-id="@user.MemberID">會員資料</a>
+                        <a class="btn btn-outline-dark" asp-controller="MemberLogin" asp-action="Logout">登出</a>
+                    } 
+                    else if (Context.Session.GetString("Manager") != null)
+                    {
+                        <span class="mt-2">Welcome Admin @admin.AdminID</span>
+                        <a class="btn btn-outline-dark me-4" asp-controller="AdminLogin" asp-action="Create">NewAdmin</a>
+                        <a class="btn btn-outline-dark" asp-controller="AdminLogin" asp-action="Logout">Logout</a>
+                    }
+                    else
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-outline-dark me-2 dropdown-toggle" id="LoginDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">登入</button>
+                            <ul class="dropdown-menu text-dark" aria-labelledby="LoginDropdownMenuLink">
+                                <li><a class="btn btn-outline-dark mb-1" asp-controller="MemberLogin" asp-action="Login">使用者</a></li>
+                                <li><a class="btn btn-outline-dark" asp-controller="AdminLogin" asp-action="Login">管理者</a></li>
+                            </ul>
+                           
+                        </div>
+                        <a class="btn btn-outline-dark" asp-controller="Members" asp-action="Register">註冊</a>
+                    }        
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="bg-light">
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - @ViewData["System"] - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

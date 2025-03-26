@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "免責聲明";
+}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - 登山地圖與討論區網站</title>
+
+    <!-- 引入 Bootstrap CSS -->
+   @*  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJz0eR2QJ3JrBBQz1Rgjg3oFzH8HtK0Llcs0Bk5msMNBXwRxtT5tPoN1r6uD" crossorigin="anonymous"> *@
+
+    <!-- 頁面自定義 CSS -->
+    <style>
+        .content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 使用 Bootstrap 來排版 -->
+    <div class="container my-5">
+        <div class="content">
+            <header class="text-center mb-4">
+                <h1>@ViewData["Title"]</h1>
+            </header>
+            <section>
+                <h3>1. 網站內容的準確性與完整性</h3>
+                <h5>
+                    本網站所提供的登山地圖、步道資訊、三角點及相關資料僅供參考，網站運營者會定期更新資料並確保其準確性，
+                    然而，由於自然環境、技術性變動或其他不可預見因素，無法保證所有資訊的準確性、完整性或及時性。
+                    使用者應在依賴任何資料之前自行進行核實，並理解網站運營者對於資料錯誤或遺漏不承擔任何責任。
+                </h5>
+            </section>
+
+            <section>
+                <h3>2. 使用者對內容的責任</h3>
+                <h5>
+                    本網站所提供的討論區及其他互動功能允許使用者發表意見、建議或討論。
+                    所有由使用者發表的內容，無論是文本、圖片、視頻或其他形式的媒體，均由該使用者負責。
+                    網站運營者對於使用者發表的內容不承擔責任。
+                    使用者必須遵守當地法律法規，並且不得發佈任何非法、詆毀、誹謗、淫穢或具有攻擊性的言論或材料。
+                    任何違反這些條款的行為都將導致相應的法律後果。
+                </h5>
+            </section>
+
+            <section>
+                <h3>3. 風險警告與責任</h3>
+                <h5>
+                    登山及其他戶外活動固有風險，包括但不限於自然災害、天氣變化、身體損傷及其他未預見的情況。
+                    網站所提供的任何登山路線、步道或三角點資訊僅作為參考，並不意味著其安全或適合所有使用者。
+                    使用者在參與登山活動前，應充分了解當地的天氣、環境及道路狀況，並根據自身的體力和經驗做出判斷。
+                    所有登山活動由使用者自行承擔風險，並承擔因任何事故或損害所引起的責任。
+                </h5>
+            </section>
+
+            <section>
+                <h3>4. 服務可用性與網站運行</h3>
+                <h5>
+                    本網站將盡最大努力保證服務的穩定性和可用性，但無法保證網站在任何時刻都能持續運行。
+                    網站運營者保留隨時中止或暫停服務的權利，無論是因為維護、升級、技術問題或其他不可預見的情況。
+                    使用者應理解，網站的中斷或停用不構成網站運營者的責任。
+                    網站對因服務中斷或故障造成的任何直接或間接損失不負責。
+                </h5>
+            </section>
+
+            <section>
+                <h3>5. 第三方鏈接與網站內容</h3>
+                <h5>
+                    本網站可能會包含指向第三方網站或服務的鏈接。
+                    這些鏈接僅作為使用者參考而提供，網站運營者不對第三方網站的內容或服務負責，也不對任何由第三方網站引起的任何損失或損害承擔責任。
+                    使用者在訪問第三方網站時，應自行承擔風險並遵循該網站的使用條款。
+                </h5>
+            </section>
+
+            <section>
+                <h3>6. 隱私政策與個人資料處理</h3>
+                <h5>
+                    本網站尊重使用者的隱私並致力於保護個人資料。
+                    在使用本網站時，您可能需要提供一些個人資料，例如註冊帳號、發表評論或參與討論等。
+                    所有個人資料將根據網站的隱私政策進行處理，並僅用於提供服務和改善用戶體驗。
+                    網站不會將個人資料出售給任何第三方，但在法律要求或保護網站運營者的合法權益時，可能需要披露某些資料。
+                </h5>
+            </section>
+
+            <section>
+                <h3>7. 免責聲明的變更與更新</h3>
+                <h5>
+                    本免責聲明的條款可能會隨時更新或修改，且更新後的版本將在網站上公布，並立即生效。
+                    使用者應定期查閱本頁面，以了解最新的免責聲明內容。若您在免責聲明更新後繼續使用本網站，則表示您同意接受新條款的約束。
+                </h5>
+            </section>
+
+            <section>
+                <h3>8. 法律適用與爭議解決</h3>
+                <h5>
+                    本免責聲明及其所有條款應適用當地法律。
+                    若本聲明或網站的任何內容在法律上無效或不可執行，則該無效部分不影響其他部分的有效性。
+                    對於因使用本網站所產生的爭議，雙方應首先進行協商解決，若協商無效，則應提交當地有管轄權的法院處理。
+                </h5>
+            </section>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 登山地圖與討論區網站 | 保留所有權利</p>
+    </footer>
+
+    <!-- 引入 Bootstrap JavaScript 和 Popper -->
+   @*  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-6TfZmYNQkPq7lHkGv8LhcDEtMLX8B99D4gM7wDx3C7F0g9lJv1lV6VGXkpyPtqqf" crossorigin="anonymous"></script> *@
+</body>
+</html>

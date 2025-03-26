@@ -1,0 +1,67 @@
+﻿@model IEnumerable<MyProject.Models.Forum>
+
+@{
+    ViewData["Title"] = "討論區內容";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr/>
+
+@foreach (var item in (SelectList)ViewData["ManagerForumName"])
+{
+    <a asp-action="Index" asp-controller="ManagerForum" asp-route-forumid="@item.Value" class="btn btn-outline-dark me-2 mb-3">@item.Text</a>
+}
+
+@if (Model.Count() == 0)
+{
+    <h3 class="text-danger fw-bold text-center">目前此討論區沒有貼文</h3>
+}
+else 
+{ 
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostTitle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostContents)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ForumName.ForumName1)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Member.AccountName)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostContents)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ForumName.ForumName1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Member.AccountName)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.PostID">內容</a> |
+                    <a asp-action="Delete" asp-route-id="@item.PostID">刪除</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+}

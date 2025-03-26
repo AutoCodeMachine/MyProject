@@ -1,0 +1,44 @@
+﻿@model MyProject.Models.Administrator
+
+@{
+    ViewData["Title"] = "管理者登入";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Login" asp-controller="AdminLogin">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AdminID" class="control-label" id="LoginLabel"></label>
+                <input asp-for="AdminID"  class="form-control" id="LoginInput" />
+            </div>
+          
+            <div class="form-group mb-3">
+                <label asp-for="AdminPassword" class="control-label"></label>
+                <input asp-for="AdminPassword" class="form-control" />
+            </div>
+
+            <div class="row row-cols-auto">
+                <div class="form-group">
+                    <input type="submit" value="登入" class="btn btn-outline-dark" />
+                </div>
+                <div>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-dark">取消</a>
+                </div>
+            </div>
+            <div class="text-danger">
+                @ViewData["Message"]
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+}
+

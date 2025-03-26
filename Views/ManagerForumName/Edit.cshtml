@@ -1,0 +1,37 @@
+﻿@model MyProject.Models.ForumName
+
+@{
+    ViewData["Title"] = "編輯討論區名稱";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="ForumID" />
+
+            <div class="form-group mb-3">
+                <label asp-for="ForumName1" class="control-label"></label>
+                <input asp-for="ForumName1" class="form-control" />
+                <span asp-validation-for="ForumName1" class="text-danger"></span>
+            </div>
+
+            <div class="row row-cols-auto">
+                <div class="form-group">
+                    <input type="submit" value="確認" class="btn btn-outline-dark" />
+                </div>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-dark">取消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

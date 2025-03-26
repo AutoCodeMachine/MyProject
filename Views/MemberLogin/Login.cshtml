@@ -1,0 +1,75 @@
+﻿@model MyProject.ViewModels.VMMember
+
+@{
+    ViewData["Title"] = "會員登入";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+@if (TempData["RegisterMessage"] != null)
+{
+    <h4 class="alert alert-danger">註冊會員成功，請登入後開始使用</h4>
+}
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Login" asp-controller="MemberLogin">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label class="control-label" id="LoginLabel">請輸入會員暱稱、手機號碼或Email電子郵件信箱</label>
+                <input class="form-control" id="LoginInput"/>
+                <span class="text-danger" id="LoginSpan"></span>
+            </div>
+          
+            <div class="form-group mb-3">
+                <label asp-for="AccountPassword" class="control-label"></label>
+                <input asp-for="AccountPassword" class="form-control" />
+                <span asp-validation-for="AccountPassword" class="text-danger"></span>
+            </div>
+
+            <div class="row row-cols-auto">
+                <div class="form-group">
+                    <input type="submit" value="登入" class="btn btn-outline-dark" />
+                </div>
+                <div>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-dark">取消</a>
+                </div>
+            </div>
+            <div class="text-danger">
+                @ViewData["Message"]
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // 當用戶輸入帳號、手機號碼或 Email 時，發送 ajax 請求檢查是否已經註冊
+        $("#LoginInput").on("change", function () {
+            var input = this.value;
+
+            // ajax
+            fetch(`/MemberLogin/MemberExists?id=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // 根據返回的結果加上不同標籤
+                        if (data.matchedField === "AccountName") {
+                            $('#LoginInput').attr("name", "AccountName");
+                            $('#LoginSpan').text("");
+                        } else if (data.matchedField === "Mobile") {
+                            $('#LoginInput').attr("name", "Mobile");
+                            $('#LoginSpan').text("");
+                        } else if (data.matchedField === "Email") {
+                            $('#LoginInput').attr("name", "Email");
+                            $('#LoginSpan').text("");
+                        }
+                    } else {
+                        $('#LoginSpan').text("尚未註冊會員資料");
+                    }
+                });
+        });
+    </script>
+}

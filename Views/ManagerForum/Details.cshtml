@@ -1,0 +1,45 @@
+﻿@model MyProject.Models.Forum
+
+@{
+    ViewData["Title"] = "貼文內容";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr />
+
+<dl class="row">
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.PostTime)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.PostTime)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.PostTitle)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.PostTitle)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.PostContents)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.PostContents)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.ForumName.ForumName1)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.ForumName.ForumName1)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Member.AccountName)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Member.AccountName)
+    </dd>
+</dl>
+
+<div>
+    <a asp-action="Index" class="btn btn-outline-dark">上一頁</a>
+</div>

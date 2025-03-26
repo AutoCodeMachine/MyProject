@@ -1,0 +1,70 @@
+﻿@model MyProject.Models.Administrator
+
+@{
+    ViewData["Title"] = "NewAdmin";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" id="newAdminForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           
+            <div class="form-group mb-3">
+                <label asp-for="AdminID" class="control-label"></label>
+                <input asp-for="AdminID" class="form-control" />
+                <span asp-validation-for="AdminID" class="text-danger" id="AdminIDCheck"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AdminPassword" class="control-label"></label>
+                <input asp-for="AdminPassword" class="form-control" />
+                <span asp-validation-for="AdminPassword" class="text-danger"></span>
+            </div>
+
+            <div class="row row-cols-auto">
+                <div class="form-group">
+                    <input type="submit" value="送出資料" class="btn btn-outline-dark" />
+                </div>
+                <div>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-dark">取消註冊</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        //確認AdminID是否重複
+        $("#AdminID").on("change", function () {
+            var input = this.value;
+
+            if (input === "") {
+                $('#AdminID').removeClass("is-valid is-invalid"); // 若未輸入，移除所有樣式
+                return;
+            }
+
+            // ajax
+            fetch(`/AdminLogin/AdminExists?id=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        $('#AdminID').attr("name", "AdminID");
+                        $('#AdminID').addClass("is-valid");
+                        $('#AdminID').removeClass("is-invalid");
+                        $(AdminIDCheck).text('AdminID可用');
+                    } else {
+                        $('#AdminID').attr("name", "");
+                        $('#AdminID').addClass("is-invalid");
+                        $('#AdminID').removeClass("is-valid");
+                        $(AdminIDCheck).text('AdminID重複');
+                    }
+                });
+        });
+    </script>
+}

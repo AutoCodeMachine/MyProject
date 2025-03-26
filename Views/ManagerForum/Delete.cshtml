@@ -1,0 +1,48 @@
+﻿@model MyProject.Models.Forum
+
+@{
+    ViewData["Title"] = "刪除貼文";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<h3 class="text-danger fw-bold">確認要刪除貼文嗎?</h3>
+<hr />
+<dl class="row">
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.PostTime)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.PostTime)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.PostTitle)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.PostTitle)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.PostContents)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.PostContents)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.ForumName.ForumName1)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.ForumName.ForumName1)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Member.AccountName)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Member.AccountName)
+    </dd>
+</dl>
+    
+<form asp-action="Delete">
+    <input type="hidden" asp-for="PostID" />
+    <input type="submit" value="確認刪除" class="btn btn-outline-dark" /> |
+    <a asp-action="Index" class="btn btn-outline-dark">取消</a>
+</form>
+

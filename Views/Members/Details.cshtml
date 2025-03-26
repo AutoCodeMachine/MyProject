@@ -1,0 +1,76 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model MyProject.ViewModels.VMMember
+
+@{
+    ViewData["Title"] = "會員資料";
+}
+
+<h1 class="text-center"> @ViewData["Title"] </h1>
+<hr />
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.AccountName)
+        </dt>
+        <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.AccountName)
+        </dd>
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.PersonalName)
+        </dt>
+        <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.PersonalName)
+        </dd>
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.PersonalID)
+        </dt>
+        <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.PersonalID)
+        </dd>
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd class="col-sm-10 mb-3">
+            @* @Html.DisplayFor(model => model.Gender) *@
+            @if (Model.Gender == true)
+            {
+                <div class="btn btn-outline-primary btn-sm" for="male">男</div>
+            }
+            else
+            {
+                <div class="btn btn-outline-danger btn-sm" for="female">女</div>
+            }
+        </dd>
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+        <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Mobile)
+        </dt>
+        <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.Mobile)
+        </dd>
+
+        <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+    </dl>
+</div>
+<div class="row row-cols-auto">
+    <a asp-action="Edit" asp-route-id="@Model?.MemberID" class="btn btn-outline-dark me-4">更改個人資料</a>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-dark">回首頁</a>
+</div>
